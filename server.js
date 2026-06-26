@@ -4,6 +4,8 @@ const app = express();
 app.use(express.json());
 
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN || "diaza360";
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
+const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 
 app.get("/", (req, res) => {
   res.send("DIAZA360 funcionando correctamente.");
@@ -21,8 +23,38 @@ app.get("/webhook", (req, res) => {
   return res.sendStatus(403);
 });
 
-app.post("/webhook", (req, res) => {
+app.post("/webhook", async (req, res) => {
   console.log("Mensaje recibido:", JSON.stringify(req.body, null, 2));
+
+  try {
+    const message =
+      req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+
+    if (message) {
+      const from = message.from;
+
+      await fetch(
+        `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            to: from,
+            text: {
+              body: "👋 Hola. Soy DIAZA360. Gracias por escribirnos. ¿En qué podemos ayudarte?"
+            }
+          }),
+        }
+      );
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
   res.sendStatus(200);
 });
 
