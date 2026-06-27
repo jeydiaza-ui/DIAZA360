@@ -1,5 +1,5 @@
 const express = require("express");
-const fetch = require("node-fetch");
+const axios = require("axios");
 
 const app = express();
 app.use(express.json());
@@ -34,22 +34,22 @@ app.post("/webhook", async (req, res) => {
     if (message) {
       const from = message.from;
 
-      await fetch(
-        `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: from,
-            text: {
-              body: "👋 Hola. Soy DIAZA360. Gracias por escribirnos. ¿En qué podemos ayudarte?"
-            }
-          }),
-        }
+    await axios.post(
+  `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+  {
+    messaging_product: "whatsapp",
+    to: from,
+    text: {
+      body: "👋 Hola. Soy DIAZA360. Gracias por escribirnos. ¿En qué podemos ayudarte?"
+    }
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      "Content-Type": "application/json"
+    }
+  }
+);
       );
     }
   } catch (error) {
