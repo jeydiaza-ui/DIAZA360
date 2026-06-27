@@ -25,7 +25,8 @@ app.get("/webhook", (req, res) => {
 });
 
 app.post("/webhook", async (req, res) => {
-  console.log("Mensaje recibido:", JSON.stringify(req.body, null, 2));
+  console.log("========== WEBHOOK ACTIVADO ==========");
+console.log(JSON.stringify(req.body, null, 2));
 
   try {
     const message =
