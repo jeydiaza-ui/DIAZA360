@@ -49,7 +49,6 @@ app.post("/webhook", async (req, res) => {
       "Content-Type": "application/json"
     }
   }
-);
       );
     }
   } catch (error) {
